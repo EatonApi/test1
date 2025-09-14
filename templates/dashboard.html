@@ -1,0 +1,166 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>用户控制台</h2>
+        <div class="d-flex">
+            <span class="badge bg-primary me-2">用户: {{ user.username }}</span>
+            <span class="badge bg-info">队伍: {{ user.team_name or '未设置' }}</span>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card schedule-card">
+                <div class="card-header bg-warning text-white d-flex justify-content-between">
+                    <h4>我的赛程安排</h4>
+                    <a href="#" class="btn btn-sm btn-light">查看全部</a>
+                </div>
+                <div class="card-body">
+                    {% if schedules %}
+                    <div class="list-group">
+                        {% for schedule in schedules %}
+                        <div class="list-group-item">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h5 class="mb-1">{{ schedule.title }}</h5>
+                                <small>{{ schedule.start_time.strftime('%m-%d %H:%M') }}</small>
+                            </div>
+                            <p class="mb-1">{{ schedule.content }}</p>
+                            <small>结束时间: {{ schedule.end_time.strftime('%m-%d %H:%M') }}</small>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="alert alert-info">
+                        您当前没有赛程安排
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="card mt-4 registration-card">
+                <div class="card-header bg-danger text-white">
+                    <h4>我的报名记录</h4>
+                </div>
+                <div class="card-body">
+                    {% if registrations %}
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>比赛</th>
+                                    <th>报名时间</th>
+                                    <th>状态</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for reg in registrations %}
+                                <tr>
+                                    <td>
+                                        <a href="{{ url_for('competition_detail', id=reg.competition_id) }}">
+                                            {{ competitions[reg.competition_id].title }}
+                                        </a>
+                                    </td>
+                                    <td>{{ reg.registration_date.strftime('%Y-%m-%d') }}</td>
+                                    <td>
+                                        <span class="badge 
+                                            {% if reg.status == 'confirmed' %}bg-success
+                                            {% elif reg.status == 'rejected' %}bg-danger
+                                            {% else %}bg-warning{% endif %}">
+                                            {% if reg.status == 'confirmed' %}已确认
+                                            {% elif reg.status == 'rejected' %}已拒绝
+                                            {% else %}待确认{% endif %}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <a href="{{ url_for('registration_detail', id=reg.id) }}" 
+                                           class="btn btn-sm btn-info">
+                                            查看详情
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="alert alert-info">
+                        您还没有报名任何比赛
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card notice-card">
+                <div class="card-header bg-success text-white">
+                    <h4>我的通知</h4>
+                </div>
+                <div class="card-body">
+                    {% if notices %}
+                    <div class="list-group">
+                        {% for notice in notices %}
+                        <a href="{{ url_for('notice_detail', id=notice.id) }}" 
+                           class="list-group-item list-group-item-action">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h5 class="mb-1">{{ notice.title }}</h5>
+                                <small>{{ notice.publish_date.strftime('%m-%d') }}</small>
+                            </div>
+                            <p class="mb-1">{{ notice.content[:50] }}...</p>
+                            {% if not notice.is_public %}
+                            <small class="text-danger">个人通知</small>
+                            {% endif %}
+                        </a>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="alert alert-info">
+                        您当前没有通知
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="card mt-4">
+                <div class="card-header bg-info text-white">
+                    <h4>个人信息</h4>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>用户名:</span>
+                            <span>{{ user.username }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>姓名:</span>
+                            <span>{{ user.name or '未设置' }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>队伍名称:</span>
+                            <span>{{ user.team_name or '未设置' }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>省份:</span>
+                            <span>{{ user.province or '未设置' }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>邮箱:</span>
+                            <span>{{ user.email or '未设置' }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>电话:</span>
+                            <span>{{ user.phone or '未设置' }}</span>
+                        </li>
+                    </ul>
+                    <div class="mt-3 text-center">
+                        <small class="text-muted">如需修改个人信息，请联系管理员</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

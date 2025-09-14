@@ -1,0 +1,155 @@
+{% extends "admin/base.html" %}
+
+{% block admin_content %}
+<div class="container-fluid">
+    <h2 class="mb-4">管理员控制台</h2>
+    
+    <div class="row">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                用户总数</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ users|length }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="bi bi-people fs-1 text-primary"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                比赛数量</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ competitions|length }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="bi bi-trophy fs-1 text-success"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                报名记录</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ registrations|length }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="bi bi-clipboard-check fs-1 text-info"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                通知数量</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ notices|length }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="bi bi-megaphone fs-1 text-warning"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">最近报名</h6>
+                </div>
+                <div class="card-body">
+                    {% if registrations|length > 0 %}
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>比赛</th>
+                                    <th>用户</th>
+                                    <th>时间</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for reg in registrations[:5] %}
+                                <tr>
+                                    <td>{{ comp_map[reg.competition_id].title[:20] }}...</td>
+                                    <td>
+                                        {% if reg.user_id %}
+                                        {{ user_map[reg.user_id].username }}
+                                        {% else %}
+                                        匿名用户
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ reg.registration_date.strftime('%m-%d') }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="alert alert-info">
+                        暂无报名记录
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">最近通知</h6>
+                </div>
+                <div class="card-body">
+                    {% if notices|length > 0 %}
+                    <div class="list-group">
+                        {% for notice in notices[:5] %}
+                        <a href="#" class="list-group-item list-group-item-action">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">{{ notice.title }}</h6>
+                                <small>{{ notice.publish_date.strftime('%m-%d') }}</small>
+                            </div>
+                            <p class="mb-1">{{ notice.content[:50] }}...</p>
+                            <small>
+                                {% if notice.is_public %}
+                                <span class="badge bg-success">公开</span>
+                                {% else %}
+                                <span class="badge bg-warning">个人</span>
+                                {% endif %}
+                            </small>
+                        </a>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="alert alert-info">
+                        暂无通知
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

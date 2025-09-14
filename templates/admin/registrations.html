@@ -1,0 +1,102 @@
+{% extends "admin/base.html" %}
+
+{% block admin_content %}
+<div class="container-fluid">
+    <h2 class="mb-4">报名管理</h2>
+    
+    <div class="card shadow">
+        <div class="card-body">
+            {% if registrations %}
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>比赛</th>
+                            <th>用户</th>
+                            <th>报名时间</th>
+                            <th>状态</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for reg in registrations %}
+                        <tr>
+                            <td>{{ reg.id }}</td>
+                            <td>
+                                {% if competitions[reg.competition_id] %}
+                                    {{ competitions[reg.competition_id].title }}
+                                {% else %}
+                                    比赛已删除
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if reg.user_id and users[reg.user_id] %}
+                                    {{ users[reg.user_id].username }}
+                                {% else %}
+                                    匿名用户
+                                {% endif %}
+                            </td>
+                            <td>{{ reg.registration_date.strftime('%Y-%m-%d %H:%M') }}</td>
+                            <td>
+                                <span class="badge 
+                                    {% if reg.status == 'confirmed' %}bg-success
+                                    {% elif reg.status == 'rejected' %}bg-danger
+                                    {% else %}bg-warning{% endif %}">
+                                    {% if reg.status == 'confirmed' %}已确认
+                                    {% elif reg.status == 'rejected' %}已拒绝
+                                    {% else %}待确认{% endif %}
+                                </span>
+                            </td>
+                            <td>
+                                <a href="{{ url_for('registration_detail', id=reg.id) }}" 
+                                   class="btn btn-sm btn-info">
+                                    <i class="bi bi-eye"></i> 查看
+                                </a>
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-sm btn-success dropdown-toggle" 
+                                            data-bs-toggle="dropdown" aria-expanded="false">
+                                        更新状态
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li>
+                                            <form method="POST" action="{{ url_for('update_registration_status', id=reg.id) }}">
+                                                <input type="hidden" name="status" value="pending">
+                                                <button type="submit" class="dropdown-item">
+                                                    设为待确认
+                                                </button>
+                                            </form>
+                                        </li>
+                                        <li>
+                                            <form method="POST" action="{{ url_for('update_registration_status', id=reg.id) }}">
+                                                <input type="hidden" name="status" value="confirmed">
+                                                <button type="submit" class="dropdown-item">
+                                                    设为已确认
+                                                </button>
+                                            </form>
+                                        </li>
+                                        <li>
+                                            <form method="POST" action="{{ url_for('update_registration_status', id=reg.id) }}">
+                                                <input type="hidden" name="status" value="rejected">
+                                                <button type="submit" class="dropdown-item">
+                                                    设为已拒绝
+                                                </button>
+                                            </form>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="alert alert-info">
+                当前没有报名记录
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

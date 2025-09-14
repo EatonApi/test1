@@ -1,0 +1,124 @@
+{% extends "admin/base.html" %}
+
+{% block admin_content %}
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>通知管理</h2>
+        
+    </div>
+
+    <div class="card shadow">
+        <div class="card-body">
+            {% if notices %}
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>标题</th>
+                            <th>内容</th>
+                            <th>发布时间</th>
+                            <th>类型</th>
+                            <th>目标用户</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for notice in notices %}
+                        <tr>
+                            <td>{{ notice.id }}</td>
+                            <td>{{ notice.title }}</td>
+                            <td>{{ notice.content[:50] }}...</td>
+                            <td>{{ notice.publish_date.strftime('%Y-%m-%d') }}</td>
+                            <td>
+                                {% if notice.is_public %}
+                                <span class="badge bg-success">公开</span>
+                                {% else %}
+                                <span class="badge bg-warning">个人</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if notice.user_id %}
+                                {{ users[notice.user_id].username }}
+                                {% else %}
+                                所有用户
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a href="#" class="btn btn-sm btn-info">
+                                    <i class="bi bi-eye"></i> 查看
+                                </a>
+                                <a href="#" class="btn btn-sm btn-danger">
+                                    <i class="bi bi-trash"></i> 删除
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="alert alert-info">
+                当前没有通知
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addNoticeModal">
+            <i class="bi bi-plus-lg"></i> 发布通知
+        </button>
+</div>
+
+<!-- 添加通知模态框 -->
+<div class="modal fade" id="addNoticeModal" tabindex="-1" aria-labelledby="addNoticeModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addNoticeModalLabel">发布新通知</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="POST" action="{{ url_for('manage_notices') }}">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="title" class="form-label">通知标题 *</label>
+                        <input type="text" class="form-control" id="title" name="title" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="content" class="form-label">通知内容 *</label>
+                        <textarea class="form-control" id="content" name="content" rows="4" required></textarea>
+                    </div>
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="is_public" name="is_public" checked>
+                        <label class="form-check-label" for="is_public">公开通知（所有用户可见）</label>
+                    </div>
+                    <div class="mb-3" id="userSelectContainer" style="display: none;">
+                        <label for="user_id" class="form-label">选择目标用户</label>
+                        <select class="form-select" id="user_id" name="user_id">
+                            <option value="0">所有用户</option>
+                            {% for user in users %}
+                            <option value="{{ user.id }}">{{ user.username }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="submit" class="btn btn-primary">发布通知</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 显示/隐藏用户选择框
+    document.getElementById('is_public').addEventListener('change', function() {
+        const userSelect = document.getElementById('userSelectContainer');
+        if (this.checked) {
+            userSelect.style.display = 'none';
+        } else {
+            userSelect.style.display = 'block';
+        }
+    });
+</script>
+{% endblock %}

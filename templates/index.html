@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="text-center mb-5">
+        <h2>欢迎使用比赛信息管理系统</h2>
+        <p class="lead">一站式管理您的比赛、报名、通知和赛程安排</p>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card competition-card">
+                <div class="card-header bg-primary text-white">
+                    <h4 id="competitions">近期比赛</h4>
+                </div>
+                <div class="card-body">
+                    {% if competitions %}
+                    <div class="list-group">
+                        {% for comp in competitions %}
+                        <a href="{{ url_for('competition_detail', id=comp.id) }}" 
+                           class="list-group-item list-group-item-action">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h5 class="mb-1">{{ comp.title }}</h5>
+                                <small>{{ comp.start_date.strftime('%Y-%m-%d') }}</small>
+                            </div>
+                            <p class="mb-1">{{ comp.description[:100] }}...</p>
+                            <small>截止日期: {{ comp.end_date.strftime('%Y-%m-%d') }}</small>
+                        </a>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="alert alert-info">
+                        当前没有比赛
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card notice-card">
+                <div class="card-header bg-success text-white">
+                    <h4 id="notices">最新通知</h4>
+                </div>
+                <div class="card-body">
+                    {% if public_notices %}
+                    <div class="list-group">
+                        {% for notice in public_notices %}
+                        <a href="#" class="list-group-item list-group-item-action">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">{{ notice.title }}</h6>
+                                <small>{{ notice.publish_date.strftime('%m-%d') }}</small>
+                            </div>
+                            <p class="mb-1">{{ notice.content[:50] }}...</p>
+                        </a>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="alert alert-info">
+                        当前没有通知
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="card mt-4">
+                <div class="card-body text-center">
+                    <h5 class="card-title">开始使用</h5>
+                    <p class="card-text">登录系统查看个人赛程和通知</p>
+                    <a href="{{ url_for('login') }}" class="btn btn-primary">登录系统</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mt-5">
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-trophy fs-1 text-primary mb-3"></i>
+                    <h4 class="card-title">比赛管理</h4>
+                    <p class="card-text">管理员可以轻松创建和管理各类比赛</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-clipboard-check fs-1 text-success mb-3"></i>
+                    <h4 class="card-title">在线报名</h4>
+                    <p class="card-text">用户无需登录即可填写表单报名比赛</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-calendar-event fs-1 text-warning mb-3"></i>
+                    <h4 class="card-title">赛程安排</h4>
+                    <p class="card-text">管理员可为用户安排比赛日程</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

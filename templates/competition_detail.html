@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card competition-card">
+                <div class="card-header bg-primary text-white">
+                    <h3>{{ competition.title }}</h3>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">{{ competition.description }}</p>
+                    <div class="mb-3">
+                        <span class="badge bg-info">开始时间: {{ competition.start_date.strftime('%Y-%m-%d') }}</span>
+                        <span class="badge bg-info ms-2">结束时间: {{ competition.end_date.strftime('%Y-%m-%d') }}</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card mt-4 registration-card">
+                <div class="card-header bg-success text-white">
+                    <h4>比赛报名</h4>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        {% for field in form_fields %}
+                        <div class="mb-3">
+                            <label class="form-label">{{ field.name }}{% if field.required %} <span class="text-danger">*</span>{% endif %}</label>
+                            
+                            {% if field.type == 'text' %}
+                            <input type="text" class="form-control" name="{{ field.name }}" {% if field.required %}required{% endif %}>
+                            
+                            {% elif field.type == 'email' %}
+                            <input type="email" class="form-control" name="{{ field.name }}" {% if field.required %}required{% endif %}>
+                            
+                            {% elif field.type == 'number' %}
+                            <input type="number" class="form-control" name="{{ field.name }}" {% if field.required %}required{% endif %}>
+                            
+                            {% elif field.type == 'select' %}
+                            <select class="form-select" name="{{ field.name }}" {% if field.required %}required{% endif %}>
+                                <option value="">请选择</option>
+                                {% for option in field.options.split(',') %}
+                                <option value="{{ option }}">{{ option }}</option>
+                                {% endfor %}
+                            </select>
+                            
+                            {% elif field.type == 'textarea' %}
+                            <textarea class="form-control" name="{{ field.name }}" rows="3" {% if field.required %}required{% endif %}></textarea>
+                            
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                        
+                        <button type="submit" class="btn btn-primary btn-lg">提交报名</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header bg-warning">
+                    <h4>注意事项</h4>
+                </div>
+                <div class="card-body">
+                    <ul>
+                        <li>请确保填写的信息准确无误</li>
+                        <li>带 * 号的为必填项</li>
+                        <li>提交后信息不可修改，如需修改请联系管理员</li>
+                        <li>报名成功后会收到邮件确认</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="card mt-4 notice-card">
+                <div class="card-header bg-info text-white">
+                    <h4>相关通知</h4>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group">
+                        {% for notice in public_notices %}
+                        <li class="list-group-item">
+                            <a href="#">{{ notice.title }}</a>
+                            <small class="text-muted">{{ notice.publish_date.strftime('%Y-%m-%d') }}</small>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

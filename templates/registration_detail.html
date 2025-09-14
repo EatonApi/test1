@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-lg">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="mb-0">报名详情</h2>
+                    <div class="d-flex justify-content-between mt-2">
+                        <small>{{ registration.registration_date.strftime('%Y年%m月%d日') }}</small>
+                        <span class="badge 
+                            {% if registration.status == 'confirmed' %}bg-success
+                            {% elif registration.status == 'rejected' %}bg-danger
+                            {% else %}bg-warning{% endif %}">
+                            {% if registration.status == 'confirmed' %}已确认
+                            {% elif registration.status == 'rejected' %}已拒绝
+                            {% else %}待确认{% endif %}
+                        </span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="mb-4">
+                        <h4>{{ competition.title }}</h4>
+                        <p class="text-muted">{{ competition.description[:100] }}...</p>
+                        <div class="d-flex">
+                            <span class="badge bg-info me-2">
+                                开始: {{ competition.start_date.strftime('%Y-%m-%d') }}
+                            </span>
+                            <span class="badge bg-info">
+                                结束: {{ competition.end_date.strftime('%Y-%m-%d') }}
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <hr>
+                    
+                    <h5 class="mb-3">报名信息</h5>
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <tbody>
+                                {% for key, value in form_data.items() %}
+                                <tr>
+                                    <th style="width: 30%">{{ key }}</th>
+                                    <td>{{ value }}</td>
+                                </tr>
+                                {% endfor %}
+                                <tr>
+                                    <th>报名时间</th>
+                                    <td>{{ registration.registration_date.strftime('%Y-%m-%d %H:%M') }}</td>
+                                </tr>
+                                <tr>
+                                    <th>当前状态</th>
+                                    <td>
+                                        <span class="badge 
+                                            {% if registration.status == 'confirmed' %}bg-success
+                                            {% elif registration.status == 'rejected' %}bg-danger
+                                            {% else %}bg-warning{% endif %}">
+                                            {% if registration.status == 'confirmed' %}已确认
+                                            {% elif registration.status == 'rejected' %}已拒绝
+                                            {% else %}待确认{% endif %}
+                                        </span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="alert alert-info mt-4">
+                        <i class="bi bi-info-circle"></i> 报名信息提交后不可修改。如需修改，请联系管理员。
+                    </div>
+                </div>
+                <div class="card-footer text-center">
+                    <a href="{{ url_for('dashboard') }}" class="btn btn-primary">
+                        <i class="bi bi-arrow-left"></i> 返回控制台
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

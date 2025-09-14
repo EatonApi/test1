@@ -1,0 +1,225 @@
+{% extends "admin/base.html" %}
+
+{% block admin_content %}
+<div class="container-fluid">
+    
+
+    <div class="card shadow">
+        <div class="card-body">
+            {% if competitions %}
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>比赛名称</th>
+                            <th>开始日期</th>
+                            <th>结束日期</th>
+                            <th>报名表单字段</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for comp in competitions %}
+                        <tr>
+                            <td>{{ comp.id }}</td>
+                            <td>
+                                <strong>{{ comp.title }}</strong>
+                                <div class="text-muted small">{{ comp.description[:50] }}...</div>
+                            </td>
+                            <td>{{ comp.start_date.strftime('%Y-%m-%d') }}</td>
+                            <td>{{ comp.end_date.strftime('%Y-%m-%d') }}</td>
+                            <td>
+                                {% set fields = comp.form_fields | from_json %}
+                                <span class="badge bg-primary">{{ fields|length }} 个字段</span>
+                            </td>
+                            <td>
+                                <a href="#" class="btn btn-sm btn-info">
+                                    <i class="bi bi-eye"></i> 查看
+                                </a>
+                                <a href="#" class="btn btn-sm btn-danger">
+                                    <i class="bi bi-trash"></i> 删除
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="alert alert-info">
+                当前没有比赛
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCompetitionModal">
+            <i class="bi bi-plus-lg"></i> 创建新比赛
+        </button>
+    </div>
+</div>
+
+<!-- 添加比赛模态框 -->
+<div class="modal fade" id="addCompetitionModal" tabindex="-1" aria-labelledby="addCompetitionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addCompetitionModalLabel">创建新比赛</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="POST" action="{{ url_for('manage_competitions') }}">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="title" class="form-label">比赛名称 *</label>
+                        <input type="text" class="form-control" id="title" name="title" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="description" class="form-label">比赛描述 *</label>
+                        <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="start_date" class="form-label">开始日期 *</label>
+                            <input type="date" class="form-control" id="start_date" name="start_date" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="end_date" class="form-label">结束日期 *</label>
+                            <input type="date" class="form-control" id="end_date" name="end_date" required>
+                        </div>
+                    </div>
+                    
+                    <h5 class="mt-4">报名表单字段</h5>
+                    <p class="text-muted">最多可添加5个自定义字段</p>
+                    
+                    <div class="border p-3 mb-3">
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label class="form-label">字段1名称</label>
+                                <input type="text" class="form-control" name="field_name_1">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">字段类型</label>
+                                <select class="form-select" name="field_type_1">
+                                    <option value="">请选择</option>
+                                    <option value="text">文本</option>
+                                    <option value="email">邮箱</option>
+                                    <option value="number">数字</option>
+                                    <option value="select">下拉选择</option>
+                                    <option value="textarea">多行文本</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4 pt-4">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="field_required_1" name="field_required_1">
+                                    <label class="form-check-label" for="field_required_1">必填项</label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label class="form-label">字段2名称</label>
+                                <input type="text" class="form-control" name="field_name_2">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">字段类型</label>
+                                <select class="form-select" name="field_type_2">
+                                    <option value="">请选择</option>
+                                    <option value="text">文本</option>
+                                    <option value="email">邮箱</option>
+                                    <option value="number">数字</option>
+                                    <option value="select">下拉选择</option>
+                                    <option value="textarea">多行文本</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4 pt-4">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="field_required_2" name="field_required_2">
+                                    <label class="form-check-label" for="field_required_2">必填项</label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label class="form-label">字段3名称</label>
+                                <input type="text" class="form-control" name="field_name_3">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">字段类型</label>
+                                <select class="form-select" name="field_type_3">
+                                    <option value="">请选择</option>
+                                    <option value="text">文本</option>
+                                    <option value="email">邮箱</option>
+                                    <option value="number">数字</option>
+                                    <option value="select">下拉选择</option>
+                                    <option value="textarea">多行文本</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4 pt-4">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="field_required_3" name="field_required_3">
+                                    <label class="form-check-label" for="field_required_3">必填项</label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label class="form-label">字段4名称</label>
+                                <input type="text" class="form-control" name="field_name_4">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">字段类型</label>
+                                <select class="form-select" name="field_type_4">
+                                    <option value="">请选择</option>
+                                    <option value="text">文本</option>
+                                    <option value="email">邮箱</option>
+                                    <option value="number">数字</option>
+                                    <option value="select">下拉选择</option>
+                                    <option value="textarea">多行文本</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4 pt-4">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="field_required_4" name="field_required_4">
+                                    <label class="form-check-label" for="field_required_4">必填项</label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label class="form-label">字段5名称</label>
+                                <input type="text" class="form-control" name="field_name_5">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">字段类型</label>
+                                <select class="form-select" name="field_type_5">
+                                    <option value="">请选择</option>
+                                    <option value="text">文本</option>
+                                    <option value="email">邮箱</option>
+                                    <option value="number">数字</option>
+                                    <option value="select">下拉选择</option>
+                                    <option value="textarea">多行文本</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4 pt-4">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="field_required_5" name="field_required_5">
+                                    <label class="form-check-label" for="field_required_5">必填项</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="submit" class="btn btn-primary">创建比赛</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

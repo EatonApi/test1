@@ -1,0 +1,55 @@
+{% extends "admin/base.html" %}
+
+{% block admin_content %}
+<div class="container-fluid">
+    <h2 class="mb-4">编辑用户</h2>
+    
+    <div class="card shadow">
+        <div class="card-body">
+            <form method="POST">
+                <div class="mb-3">
+                    <label for="username" class="form-label">用户名</label>
+                    <input type="text" class="form-control" id="username" name="username" 
+                           value="{{ user.username }}" readonly>
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">新密码 (留空则不修改)</label>
+                    <input type="password" class="form-control" id="password" name="password">
+                </div>
+                <div class="mb-3">
+                    <label for="name" class="form-label">姓名</label>
+                    <input type="text" class="form-control" id="name" name="name" 
+                           value="{{ user.name or '' }}">
+                </div>
+                <div class="mb-3">
+                    <label for="team_name" class="form-label">队伍名称</label>
+                    <input type="text" class="form-control" id="team_name" name="team_name" 
+                           value="{{ user.team_name or '' }}">
+                </div>
+                <div class="mb-3">
+                    <label for="province" class="form-label">省份</label>
+                    <input type="text" class="form-control" id="province" name="province" 
+                           value="{{ user.province or '' }}">
+                </div>
+                <div class="mb-3">
+                    <label for="email" class="form-label">邮箱</label>
+                    <input type="email" class="form-control" id="email" name="email" 
+                           value="{{ user.email or '' }}">
+                </div>
+                <div class="mb-3">
+                    <label for="phone" class="form-label">电话</label>
+                    <input type="tel" class="form-control" id="phone" name="phone" 
+                           value="{{ user.phone or '' }}">
+                </div>
+                <div class="mb-3 form-check">
+                    <input type="checkbox" class="form-check-input" id="is_admin" name="is_admin" 
+                           {{ 'checked' if user.is_admin }}>
+                    <label class="form-check-label" for="is_admin">管理员权限</label>
+                </div>
+                <button type="submit" class="btn btn-primary">保存更改</button>
+                <a href="{{ url_for('manage_users') }}" class="btn btn-secondary">取消</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
